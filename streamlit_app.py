@@ -253,7 +253,7 @@ def main():
             
             if os.path.exists(csv_filename):
                 df = pd.read_csv(csv_filename)
-                df = df.append(new_post, ignore_index=True)
+                df = pd.concat([df, pd.DataFrame([new_post])], ignore_index=True)
             else:
                 df = pd.DataFrame([new_post])
             
