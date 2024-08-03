@@ -219,13 +219,13 @@ def main():
     
     if st.button("Generate JSON"):
         if company_name and company_bio and header_image_url:
-            article_prompt = f"Write a website article based on the following company {bio}. ###RULES Don't include a title and keep to less than 500 words. {bio}=:\n\n{company_bio}\n\nArticle:"
+            article_prompt = f"Write a website article based on the following company bio. ###RULES Don't include a title and keep to less than 500 words. bio=:\n\n{company_bio}\n\nArticle:"
             article = generate_text(article_prompt)
             
-            title_prompt = f"Generate a title for a website article based on the following company {bio}. ###RULES Don't encapsulate in quotes. {bio}=:\n\n{company_bio}\n\nTitle:"
+            title_prompt = f"Generate a title for a website article based on the following company bio. ###RULES Don't encapsulate in quotes. bio=:\n\n{company_bio}\n\nTitle:"
             title = generate_text(title_prompt, max_tokens=50).strip()
             
-            subtitle_prompt = f"Generate a subtitle for a website article based on the following company {bio}. ###RULES Don't encapsulate in quotes. {bio}=:\n\n{company_bio}\n\nSubtitle:"
+            subtitle_prompt = f"Generate a subtitle for a website article based on the following company bio. ###RULES Don't encapsulate in quotes. bio=:\n\n{company_bio}\n\nSubtitle:"
             subtitle = generate_text(subtitle_prompt, max_tokens=50).strip()
             
             json_data = generate_json(company_name, company_bio, header_image_url, article, title, subtitle)
