@@ -267,4 +267,12 @@ def main():
                 label="Download .txws file",
                 data=file,
                 file_name=st.session_state.txws_filename,
-                mime="application
+                mime="application/zip"
+            )
+    
+    if st.session_state.csv_filename:
+        with open(st.session_state.csv_filename, "rb") as file:
+            st.download_button(
+                label="Download CSV file",
+                data=file,
+                file_name=st.session_state.csv_filename
