@@ -64,7 +64,6 @@ def generate_json(company_name, company_bio, header_image_url, article, title, s
                         "size": 12
                     },
                     "palceholder": "Write your comment",
-                    "title": {
                         "color": 0,
                         "text": "Comments",
                         "use_default_url": 1,
@@ -260,7 +259,7 @@ def main():
             }
             
             df = pd.DataFrame([new_post])
-            df.to_csv(csv_filename, index=False)
+            df.to_csv(csv_filename, index=False, line_terminator='\n')
             
             st.session_state.csv_filename = csv_filename
             
@@ -268,7 +267,7 @@ def main():
         else:
             st.error("Please fill in all fields.")
     
-    
+
     if st.session_state.txws_filename:
         with open(st.session_state.txws_filename, "rb") as file:
             st.download_button(
