@@ -219,7 +219,7 @@ def main():
     
     if st.button("Generate JSON"):
         if company_name and company_bio and header_image_url:
-            article_prompt = f"Write a website article based on the following company bio. ###RULES Don't include a title and keep to less than 500 words. bio=:\n\n{company_bio}\n\nArticle:"
+            article_prompt = f"Write a website article based on the following company bio. ###RULES 1. Don't include a title 2. keep to less than 200 words. bio=:\n\n{company_bio}\n\nArticle:"
             article = generate_text(article_prompt)
             
             title_prompt = f"Generate a title for a website article based on the following company bio. ###RULES Don't encapsulate in quotes. bio=:\n\n{company_bio}\n\nTitle:"
