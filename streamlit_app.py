@@ -275,4 +275,10 @@ def main():
             st.download_button(
                 label="Download CSV file",
                 data=file,
-                file_name=st.session_state.csv_filename
+                file_name=st.session_state.csv_filename,
+                mime="text/csv"
+            )
+
+if __name__ == '__main__':
+    main()
+
