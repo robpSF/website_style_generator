@@ -210,66 +210,61 @@ def main():
     company_bio = st.text_area("Company Bio")
     header_image_url = st.text_input("Header Image URL")
     
+    if "json_data" not in st.session_state:
+        st.session_state.json_data = None
+    if "txws_filename" not in st.session_state:
+        st.session_state.txws_filename = None
+    if "csv_filename" not in st.session_state:
+        st.session_state.csv_filename = None
+    
     if st.button("Generate JSON"):
         if company_name and company_bio and header_image_url:
             prompt = f"Write a website article based on the following company bio:\n\n{company_bio}\n\nArticle:"
             article = generate_text(prompt)
-            data = generate_json(company_name, company_bio, header_image_url, article)
-            st.json(data)
+            json_data = generate_json(company_name, company_bio, header_image_url, article)
+            st.json(json_data)
             
             json_filename = f"{company_name.replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
             zip_filename = f"{company_name.replace(' ', '_').lower()}.zip"
             txws_filename = f"{company_name.replace(' ', '_').lower()}.txws"
             
             with open(json_filename, 'w') as json_file:
-                json.dump(data, json_file, indent=4)
+                json.dump(json_data, json_file, indent=4)
             
             with zipfile.ZipFile(zip_filename, 'w') as zipf:
                 zipf.write(json_filename)
             
             os.rename(zip_filename, txws_filename)
             
-            with open(txws_filename, "rb") as file:
-                st.download_button(
-                    label="Download .txws file",
-                    data=file,
-                    file_name=txws_filename,
-                    mime="application/zip"
-                )
+            st.session_state.json_data = json_data
+            st.session_state.txws_filename = txws_filename
             
             os.remove(json_filename)
-            os.remove(txws_filename)
             
-            # Append the generated article to a CSV file
+            # Create a CSV file with the generated article
             csv_filename = f'{company_name.replace(" ", "_").lower()}_posts.csv'
             new_post = {
                 "Author": "No Author",
                 "Title": f"Pioneering the Future: {company_name} Leader Sets New Standards",
                 "Subtitle": "Innovative technology and quality craftsmanship at the heart of tomorrow's electronics",
                 "Message": article,
-                "Attachment": "21",
+                "Attachment": "",
                 "Date": datetime.now().strftime('%Y-%m-%d')
             }
             
-            if os.path.exists(csv_filename):
-                df = pd.read_csv(csv_filename)
-                df = pd.concat([df, pd.DataFrame([new_post])], ignore_index=True)
-            else:
-                df = pd.DataFrame([new_post])
-            
+            df = pd.DataFrame([new_post])
             df.to_csv(csv_filename, index=False)
             
-            with open(csv_filename, "rb") as file:
-                st.download_button(
-                    label="Download CSV file",
-                    data=file,
-                    file_name=csv_filename,
-                    mime="text/csv"
-                )
+            st.session_state.csv_filename = csv_filename
             
-            st.success(f"JSON file {json_filename} has been generated and included in {txws_filename}!")
+            st.success(f"JSON file has been generated and included in {txws_filename}!")
         else:
             st.error("Please fill in all fields.")
-
-if __name__ == '__main__':
-    main()
+    
+    if st.session_state.txws_filename:
+        with open(st.session_state.txws_filename, "rb") as file:
+            st.download_button(
+                label="Download .txws file",
+                data=file,
+                file_name=st.session_state.txws_filename,
+                mime="application
