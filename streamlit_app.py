@@ -180,7 +180,7 @@ def generate_json(company_name, company_bio, header_image_url, article, title, s
                 "text_direction": None,
                 "text": article,
                 "ts": "12days",
-                "attachment": ["21"],
+                "attachment": [],
                 "subtitle": subtitle,
                 "ts_r_value": None,
                 "title": title,
