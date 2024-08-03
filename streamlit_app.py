@@ -5,6 +5,7 @@ from datetime import datetime
 import openai
 import os
 import zipfile
+import pandas as pd
 
 # Load the OpenAI keys from Streamlit secrets
 openai.organization = st.secrets["organization"]
@@ -239,9 +240,31 @@ def main():
             os.remove(json_filename)
             os.remove(txws_filename)
             
-            st.success(f"JSON file {json_filename} has been generated and included in {txws_filename}!")
-        else:
-            st.error("Please fill in all fields.")
-
-if __name__ == '__main__':
-    main()
+            # Append the generated article to a CSV file
+            csv_filename = 'company_posts.csv'
+            new_post = {
+                "Author": "No Author",
+                "Title": f"Pioneering the Future: {company_name} Leader Sets New Standards",
+                "Subtitle": "Innovative technology and quality craftsmanship at the heart of tomorrow's electronics",
+                "Message": article,
+                "Attachment": "21",
+                "Date": datetime.now().strftime('%Y-%m-%d')
+            }
+            
+            if os.path.exists(csv_filename):
+                df = pd.read_csv(csv_filename)
+                df = df.append(new_post, ignore_index=True)
+            else:
+                df = pd.DataFrame([new_post])
+            
+            df.to_csv(csv_filename, index=False)
+            
+            with open(csv_filename, "rb") as file:
+                st.download_button(
+                    label="Download CSV file",
+                    data=file,
+                    file_name=csv_filename,
+                    mime="text/csv"
+                )
+            
+            st.success(f"JSON file {json_filename} has been generated &#8203;:citation[oaicite:0]{index=0}&#8203;
