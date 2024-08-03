@@ -225,8 +225,9 @@ def main():
             title_prompt = f"Generate a title for a website article based on the following company bio. ###RULES Don't encapsulate in quotes. bio=:\n\n{company_bio}\n\nTitle:"
             title = generate_text(title_prompt, max_tokens=50).strip()
             
-            subtitle_prompt = f"Generate a subtitle for a website article based on the following company bio. ###RULES Don't encapsulate in quotes. bio=:\n\n{company_bio}\n\nSubtitle:"
-            subtitle = generate_text(subtitle_prompt, max_tokens=50).strip()
+           # subtitle_prompt = f"Generate a subtitle for a website article based on the following company bio. ###RULES Don't encapsulate in quotes. bio=:\n\n{company_bio}\n\nSubtitle:"
+           # subtitle = generate_text(subtitle_prompt, max_tokens=50).strip()
+            subtitle = ""
             
             json_data = generate_json(company_name, company_bio, header_image_url, article, title, subtitle)
             st.json(json_data)
