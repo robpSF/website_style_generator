@@ -3,6 +3,8 @@ import requests
 import json
 from datetime import datetime
 import openai
+import os
+import zipfile
 
 # Load the OpenAI keys from Streamlit secrets
 openai.organization = st.secrets["organization"]
@@ -215,13 +217,31 @@ def main():
             st.json(data)
             
             json_filename = f"{company_name.replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
+            zip_filename = f"{company_name.replace(' ', '_').lower()}.zip"
+            txws_filename = f"{company_name.replace(' ', '_').lower()}.txws"
+            
             with open(json_filename, 'w') as json_file:
                 json.dump(data, json_file, indent=4)
             
-            st.success(f"JSON file {json_filename} has been generated!")
+            with zipfile.ZipFile(zip_filename, 'w') as zipf:
+                zipf.write(json_filename)
+            
+            os.rename(zip_filename, txws_filename)
+            
+            with open(txws_filename, "rb") as file:
+                st.download_button(
+                    label="Download .txws file",
+                    data=file,
+                    file_name=txws_filename,
+                    mime="application/zip"
+                )
+            
+            os.remove(json_filename)
+            os.remove(txws_filename)
+            
+            st.success(f"JSON file {json_filename} has been generated and included in {txws_filename}!")
         else:
             st.error("Please fill in all fields.")
 
 if __name__ == '__main__':
     main()
-
