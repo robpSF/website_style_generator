@@ -241,7 +241,7 @@ def main():
             os.remove(txws_filename)
             
             # Append the generated article to a CSV file
-            csv_filename = 'company_posts.csv'
+            csv_filename = f'{company_name.replace(" ", "_").lower()}_posts.csv'
             new_post = {
                 "Author": "No Author",
                 "Title": f"Pioneering the Future: {company_name} Leader Sets New Standards",
@@ -267,4 +267,9 @@ def main():
                     mime="text/csv"
                 )
             
-            st.success(f"JSON file {json_filename} has been generated &#8203;:citation[oaicite:0]{index=0}&#8203;
+            st.success(f"JSON file {json_filename} has been generated and included in {txws_filename}!")
+        else:
+            st.error("Please fill in all fields.")
+
+if __name__ == '__main__':
+    main()
