@@ -260,7 +260,7 @@ def main():
             }
             
             df = pd.DataFrame([new_post])
-            df.to_csv(csv_filename, index=False, line_terminator='\n')
+            df.to_csv(csv_filename, index=False)
             
             st.session_state.csv_filename = csv_filename
             
@@ -288,4 +288,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
