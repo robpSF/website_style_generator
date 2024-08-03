@@ -11,7 +11,7 @@ import pandas as pd
 openai.organization = st.secrets["organization"]
 openai.api_key = st.secrets["key"]
 
-def generate_text(prompt, temp=0.7):
+def generate_text(prompt, temp=0.7, max_tokens=1000):
     url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {openai.api_key}",
@@ -24,7 +24,7 @@ def generate_text(prompt, temp=0.7):
             {"role": "user", "content": prompt}
         ],
         "temperature": temp,
-        "max_tokens": 1000,
+        "max_tokens": max_tokens,
         "top_p": 1.0,
         "frequency_penalty": 0.0,
         "presence_penalty": 0.0
@@ -33,7 +33,7 @@ def generate_text(prompt, temp=0.7):
     response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"]
 
-def generate_json(company_name, company_bio, header_image_url, article):
+def generate_json(company_name, company_bio, header_image_url, article, title, subtitle):
     data = {
         "website_style": {
             "spoof_url": f"{company_name.replace(' ', '').lower()}.com",
@@ -179,11 +179,11 @@ def generate_json(company_name, company_bio, header_image_url, article):
                 "no_author": 0,
                 "text_direction": None,
                 "text": article,
-                "ts": None,
+                "ts": "12days",
                 "attachment": ["21"],
-                "subtitle": "Innovative technology and quality craftsmanship at the heart of tomorrow's electronics",
+                "subtitle": subtitle,
                 "ts_r_value": None,
-                "title": f"Pioneering the Future: {company_name} Leader Sets New Standards",
+                "title": title,
                 "ts_r_value_type": 0,
                 "ts_type": 1
             }],
@@ -219,9 +219,16 @@ def main():
     
     if st.button("Generate JSON"):
         if company_name and company_bio and header_image_url:
-            prompt = f"Write a website article based on the following company bio:\n\n{company_bio}\n\nArticle:"
-            article = generate_text(prompt)
-            json_data = generate_json(company_name, company_bio, header_image_url, article)
+            article_prompt = f"Write a website article based on the following company bio:\n\n{company_bio}\n\nArticle:"
+            article = generate_text(article_prompt)
+            
+            title_prompt = f"Generate a title for a website article based on the following company bio:\n\n{company_bio}\n\nTitle:"
+            title = generate_text(title_prompt, max_tokens=50).strip()
+            
+            subtitle_prompt = f"Generate a subtitle for a website article based on the following company bio:\n\n{company_bio}\n\nSubtitle:"
+            subtitle = generate_text(subtitle_prompt, max_tokens=50).strip()
+            
+            json_data = generate_json(company_name, company_bio, header_image_url, article, title, subtitle)
             st.json(json_data)
             
             json_filename = f"{company_name.replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
@@ -245,11 +252,11 @@ def main():
             csv_filename = f'{company_name.replace(" ", "_").lower()}_posts.csv'
             new_post = {
                 "Author": "No Author",
-                "Title": f"Pioneering the Future: {company_name} Leader Sets New Standards",
-                "Subtitle": "Innovative technology and quality craftsmanship at the heart of tomorrow's electronics",
+                "Title": title,
+                "Subtitle": subtitle,
                 "Message": article,
                 "Attachment": "",
-                "Date": datetime.now().strftime('%Y-%m-%d')
+                "Date": "12days"
             }
             
             df = pd.DataFrame([new_post])
@@ -260,6 +267,7 @@ def main():
             st.success(f"JSON file has been generated and included in {txws_filename}!")
         else:
             st.error("Please fill in all fields.")
+    
     
     if st.session_state.txws_filename:
         with open(st.session_state.txws_filename, "rb") as file:
